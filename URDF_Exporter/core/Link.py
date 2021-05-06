@@ -102,7 +102,19 @@ def make_inertial_dict(root, msg):
         Tell the status
     """
     # Get component properties.      
-    allOccs = root.occurrences
+    #allOccs = root.occurrences
+    global allOccs
+    allOccs = []
+    def get_children(root):
+        global allOccs
+        if root.childOccurrences.count == 0:
+            allOccs.append(root)    
+        else:
+            for occs in root.childOccurrences:
+                get_children(occs)
+    
+    for occs in root.occurrences:
+        get_children(occs)
     inertial_dict = {}
     
     for occs in allOccs:
@@ -158,7 +170,19 @@ def make_material_dict(root, msg):
         str_in = str_in.replace( 'ß', 'ss')
         return str_in
     # Get component properties.      
-    allOccs = root.occurrences
+    #allOccs = root.occurrences
+    global allOccs
+    allOccs = []
+    def get_children(root):
+        global allOccs
+        if root.childOccurrences.count == 0:
+            allOccs.append(root)    
+        else:
+            for occs in root.childOccurrences:
+                get_children(occs)
+    
+    for occs in root.occurrences:
+        get_children(occs)
     material_dict = {}
 
     color_dict = {}
@@ -171,10 +195,11 @@ def make_material_dict(root, msg):
   
         def traverseColor(occ):
             appear = None
-            if occ.component.appearance:
+            body = occ.bRepBodies.item(0)
+            if body.appearance:
                 print("occ appearance")
-                print(occ.appearance)
-                for prop in occ.appearance.appearanceProperties:
+                print(body.appearance)
+                for prop in body.appearance.appearanceProperties:
                     print(prop)
                     if type(prop) == adsk.core.ColorProperty:
                         print(prop)  
@@ -193,26 +218,26 @@ def make_material_dict(root, msg):
 
 
 
-        if occs.appearance:
-            for prop in occs.appearance.appearanceProperties:
+        #if occs.appearance:
+        #    for prop in occs.appearance.appearanceProperties:
                 
-                if type(prop) == adsk.core.ColorProperty:
-        #if prop:
-                    color_name = convert_german(occs.appearance.name).replace("Farbe - ","").replace("Color - ","")
-                    color_name = ("".join(re.findall(r"[A-Za-z0-9 ]*", color_name)))
-                    color_name = re.sub('\s+',' ',color_name)
-                    color_name.strip()
-                    color_name = re.sub('[ :()]', '_', color_name)
-                    color_name = color_name.replace("__","_").lower()
+        #        if type(prop) == adsk.core.ColorProperty:
+        if prop:
+            color_name = convert_german(occs.bRepBodies.item(0).appearance.name).replace("Farbe - ","").replace("Color - ","")
+            color_name = ("".join(re.findall(r"[A-Za-z0-9 ]*", color_name)))
+            color_name = re.sub('\s+',' ',color_name)
+            color_name.strip()
+            color_name = re.sub('[ :()]', '_', color_name)
+            color_name = color_name.replace("__","_").lower()
                     # print("Color found: "+ color_name)
                     # print("Red: %d ", prop.value.red)
                     # print("Green: %d", prop.value.green)
                     # print("Blue: %d", prop.value.green)                    
                     # print("Opac: %d", prop.value.opacity)
                     
-                    app_dict['material'] = color_name
-                    color_dict[color_name] = f"{prop.value.red/255} {prop.value.green/255} {prop.value.blue/255} {prop.value.opacity/255}"
-                    break
+            app_dict['material'] = color_name
+            color_dict[color_name] = f"{prop.value.red/255} {prop.value.green/255} {prop.value.blue/255} {prop.value.opacity/255}"
+                    #break
 
         if "base_link" in occs.component.name:
             material_dict['base_link'] = app_dict

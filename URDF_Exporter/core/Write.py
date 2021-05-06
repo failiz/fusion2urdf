@@ -144,7 +144,7 @@ def write_urdf(joints_dict, links_xyz_dict, inertial_dict, material_dict, packag
     try: os.mkdir(save_dir + '/urdf')
     except: pass 
 
-    file_name = save_dir + '/urdf/' + robot_name.lower() + '.xacro'  # the name of urdf file
+    file_name = save_dir + '/urdf/' + robot_name.lower() + '.urdf'  # the name of urdf file
     repo = package_name + '/meshes/'  # the repository of binary stl files
     with open(file_name, mode='w') as f:
         f.write('<?xml version="1.0" ?>\n')

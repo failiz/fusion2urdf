@@ -46,6 +46,7 @@ def export_stl(_app, save_dir):
     des: adsk.fusion.Design = _app.activeProduct
     root: adsk.fusion.Component = des.rootComponent
 
+    global showBodies
     showBodies = []
     body = adsk.fusion.BRepBody.cast(None)
     if root.isBodiesFolderLightBulbOn:
@@ -55,14 +56,18 @@ def export_stl(_app, save_dir):
 
         occ = adsk.fusion.Occurrence.cast(None)
         for occ in root.allOccurrences:
-            if not occ.assemblyContext and occ.isLightBulbOn:
-                lst = [body for body in occ.bRepBodies if body.isLightBulbOn and occ.component.isBodiesFolderLightBulbOn]
-                if occ.childOccurrences:
-                    for child in occ.childOccurrences:
-                        lst = lst + traverse(child)
-                if len(lst) > 0:
-                    showBodies.append([occ.name, lst])
-
+            def traverseForComponents(occ):
+                global showBodies
+                if occ.isLightBulbOn:
+                    lst = [body for body in occ.bRepBodies if body.isLightBulbOn and occ.component.isBodiesFolderLightBulbOn]
+                    if occ.childOccurrences:
+                        for child in occ.childOccurrences:
+                            lst = lst + traverse(child)
+                    if len(lst) > 0:
+                        showBodies.append([occ.name, lst])
+                    for occ2 in occ.childOccurrences:
+                        traverseForComponents(occ2)
+            traverseForComponents(occ)
         # get clone body
         tmpBrepMng = adsk.fusion.TemporaryBRepManager.get()
         tmpBodies = []

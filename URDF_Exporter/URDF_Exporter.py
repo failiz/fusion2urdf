@@ -59,9 +59,18 @@ def run(context):
         
         # Generate joints_dict. All joints are related to root. 
         joints_dict, msg = Joint.make_joints_dict(root, msg)
+        print("Joints: ")     
+        print(joints_dict)
+        # Generate inertial_dict
+        inertial_dict, msg = Link.make_inertial_dict(root, msg)
+        print("Links: ")     
+        print(inertial_dict)
+        
+        joints_dict, msg = Joint.make_joints_dict(root, msg)
         if msg != success_msg:
             ui.messageBox(msg, title)
-            return 0   
+            return 0  
+        print("Joints: ")     
         print(joints_dict)
         # Generate inertial_dict
         inertial_dict, msg = Link.make_inertial_dict(root, msg)

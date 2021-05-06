@@ -126,7 +126,7 @@ def make_joints_dict(root, msg):
 
     joints_dict = {}
     
-    for joint in root.joints:
+    for joint in root.allJoints:
         if joint.isLightBulbOn :
             joint_dict = {}
             joint_type = joint_type_list[joint.jointMotion.jointType]
@@ -175,9 +175,11 @@ def make_joints_dict(root, msg):
     
             def get_parent(occ): 
             # function to find the root component of the joint. This is necessary for the correct component name in the urdf file
-                if occ.assemblyContext != None:
+                #if occ.assemblyContext != None:
                     #print(occ.name)
-                    occ = get_parent(occ.assemblyContext)
+                #    occ = get_parent(occ.assemblyContext)
+                #if occ.childOccurrences is not None:
+
                 return occ
     
             if joint.occurrenceTwo != None and joint.occurrenceOne != None and joint.occurrenceOne.isLightBulbOn:
